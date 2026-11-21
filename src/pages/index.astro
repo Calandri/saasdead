@@ -1,0 +1,218 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const tools = await getCollection('tools');
+const sorted = tools.sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+// Concepts we cross out — billing practices, not companies.
+const deadIdeas = [
+  '$49/user/mo',
+  'annual lock-in',
+  'your data, their cloud',
+  'contact sales',
+  'feature tiers',
+  'price hike #4',
+  'export fees',
+  'the monthly bill',
+];
+---
+
+<Base>
+  <section class="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <p class="hero-victims" aria-label="Subscription-software habits this site argues against">
+          {deadIdeas.slice(0, 4).map((idea) => <s>{idea}</s>)}
+        </p>
+        <h1>
+          SaaS is dead.<br />
+          <span class="accent">Long live self-hosting.</span>
+        </h1>
+        <p class="hero-sub">
+          Most business software is rented: so much per person, per month, forever. What fewer
+          people know is that for a lot of it there's a free, open-source version doing the same
+          job. The catch used to be the setup. These days you paste a short text into Claude and it
+          installs the thing for you. This site lists the good ones, with the texts ready to copy.
+        </p>
+        <div class="hero-cta">
+          <a class="btn" href="#directory">Browse the tools</a>
+          <a class="btn-ghost" href="#how">How does this work?</a>
+        </div>
+      </div>
+      <div class="hero-stone reveal" aria-hidden="true">
+        <svg viewBox="0 0 120 160" role="img">
+          <path
+            d="M20 150 V60 c0 -25 18 -45 40 -45 s40 20 40 45 v90 z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="4"></path>
+          <text x="60" y="70" text-anchor="middle" font-size="26" font-weight="700" fill="currentColor">
+            RIP
+          </text>
+          <text x="60" y="100" text-anchor="middle" font-size="13" fill="currentColor">SaaS</text>
+          <text x="60" y="120" text-anchor="middle" font-size="11" fill="currentColor">$99/mo</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      {
+        [0, 1].map(() => (
+          <div class="ticker-group">
+            {deadIdeas.map((idea) => (
+              <>
+                <span class="ticker-item">
+                  <s>{idea}</s>
+                </span>
+                <span class="ticker-sep">☠</span>
+              </>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <section class="stats wrap reveal">
+    <div class="stat">
+      <span class="stat-num">$300<span class="stat-unit">+/mo</span></span>
+      <span class="stat-label"
+        >what a 10-person team can spend on CRM, video hosting and HR tools combined</span
+      >
+    </div>
+    <div class="stat">
+      <span class="stat-num accent">$0</span>
+      <span class="stat-label">what the tools on this site cost. You bring the machine.</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">~10<span class="stat-unit">min</span></span>
+      <span class="stat-label">typical setup time when Claude does the typing</span>
+    </div>
+  </section>
+
+  <section class="how wrap reveal" id="how">
+    <p class="section-kicker">how it works</p>
+    <h2>Three steps. No coding. Seriously.</h2>
+    <ol class="steps">
+      <li>
+        <span class="step-num">1</span>
+        <h3>Pick a tool</h3>
+        <p>
+          Find the one that does what you need. There's CRM, video hosting, HR, live streaming —
+          the usual suspects.
+        </p>
+      </li>
+      <li>
+        <span class="step-num">2</span>
+        <h3>Copy the instructions</h3>
+        <p>
+          Every tool page has a short text with the full setup recipe. You don't need to read it.
+          You don't even need to understand it. Just copy it.
+        </p>
+      </li>
+      <li>
+        <span class="step-num">3</span>
+        <h3>Paste it into Claude</h3>
+        <p>
+          Open <a href="https://claude.ai" target="_blank" rel="noopener">Claude</a> (or{' '}
+          <a href="https://claude.ai/claude-code" target="_blank" rel="noopener">Claude Code</a>),
+          paste the text, answer a few questions. It installs everything on your machine while you
+          watch.
+        </p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="directory wrap" id="directory">
+    <p class="section-kicker reveal">the directory</p>
+    <h2 class="reveal">The tools</h2>
+    <div class="grid">
+      {
+        sorted.map((tool) => (
+          <a class="card reveal" href={`/tools/${tool.id}`}>
+            <div class="card-top">
+              <h3>{tool.data.name}</h3>
+              <span class="badge">{tool.data.category}</span>
+            </div>
+            <p class="card-tagline">{tool.data.tagline}</p>
+            <p class="card-kills">
+              <span class="kills-label">alternative to</span>
+              {tool.data.replaces.map((r, i) => (
+                <>
+                  {i > 0 && ', '}
+                  {r.name}
+                </>
+              ))}
+            </p>
+            <span class="card-arrow" aria-hidden="true">
+              →
+            </span>
+          </a>
+        ))
+      }
+    </div>
+    <p class="price-note reveal">
+      Prices mentioned for commercial products are indicative. Vendors change them often — check
+      their websites for current numbers.
+    </p>
+  </section>
+
+  <section class="faq wrap" id="faq">
+    <p class="section-kicker reveal">questions, answered</p>
+    <h2 class="reveal">"Wait, is this for real?"</h2>
+    <div class="faq-list">
+      <details class="faq-item reveal">
+        <summary>Is this legal?</summary>
+        <p>
+          Yes. Every tool here is open source: the people who wrote it published the code under a
+          license (MIT, AGPL, GPL — it varies) that explicitly allows anyone to run it, free of
+          charge, for personal or business use. Using it this way is exactly what the license
+          permits.
+        </p>
+        <p>
+          Two things we're careful about. Product names and logos are trademarks of their owners,
+          so we mention commercial products only to compare, never to suggest they endorse us — and
+          we don't use their logos. And saasdead is an independent community project, affiliated
+          with nobody, open-source or commercial.
+        </p>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Do I need to know how to code?</summary>
+        <p>
+          No. That's the point of the site. Each tool comes with a text you paste into Claude.
+          Claude does the typing, you answer its questions. If you can copy and paste, you're
+          qualified.
+        </p>
+      </details>
+      <details class="faq-item reveal">
+        <summary>What does "hosting on my own machine" mean?</summary>
+        <p>
+          Instead of running on some company's servers, the software runs on a computer you
+          control: your own machine, or a small server you rent for a few dollars a month. Same
+          software, different landlord. Your data stays with you.
+        </p>
+      </details>
+      <details class="faq-item reveal">
+        <summary>What if something breaks?</summary>
+        <p>
+          Ask Claude first — paste the error message and it usually sorts it out. If that fails,
+          these projects have documentation, forums and issue trackers full of people who hit the
+          same wall before you did. They're mature software, used in production by thousands of
+          organizations.
+        </p>
+      </details>
+      <details class="faq-item reveal">
+        <summary>Why would anyone give this away?</summary>
+        <p>
+          Depends on the project. Some are built by volunteers who think software should be a
+          commons. Some are made by companies that sell hosting or support around the free version.
+          Either way, the license is the license: you can use it, forever, at no cost.
+        </p>
+      </details>
+    </div>
+  </section>
+</Base>

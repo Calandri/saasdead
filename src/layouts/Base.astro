@@ -1,0 +1,96 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'saasdead — free open-source tools that replace expensive SaaS',
+  description = 'Companies rent you software for hundreds a month. Communities rebuilt it for free. Pick a tool, paste one short text into Claude, and it installs everything on your own machine.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0b0d0e" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+    <noscript>
+      <style>
+        .reveal {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      </style>
+    </noscript>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a href="/" class="logo">
+          <span class="logo-mark">☠</span> saasdead<span class="logo-tld">.com</span>
+        </a>
+        <nav class="site-nav">
+          <a href="/#directory">Tools</a>
+          <a class="nav-wide-only" href="/#how">How it works</a>
+          <a href="/#faq">FAQ</a>
+          <a href="https://github.com/Calandri/saasdead" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <p class="footer-big">
+          Know a free tool that covers the same ground as a paid one?{' '}
+          <a href="https://github.com/Calandri/saasdead" target="_blank" rel="noopener"
+            >Contribute it</a
+          > — it's one short text file away.
+        </p>
+        <p class="footer-legal">
+          All product names and trademarks belong to their respective owners. saasdead is an
+          independent community project, not affiliated with or endorsed by any of the companies
+          mentioned. Comparisons are based on publicly available information; prices are indicative
+          and may have changed — always check the vendor's website.
+        </p>
+        <p class="footer-fine">SaaS is dead. Long live self-hosting. ☠</p>
+      </div>
+    </footer>
+
+    <script>
+      const els = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('in');
+                io.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.12 },
+        );
+        els.forEach((el) => io.observe(el));
+      } else {
+        els.forEach((el) => el.classList.add('in'));
+      }
+    </script>
+  </body>
+</html>

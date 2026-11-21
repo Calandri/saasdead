@@ -1,0 +1,105 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const tools = await getCollection('tools');
+  return tools.map((tool) => ({
+    params: { slug: tool.id },
+    props: { tool },
+  }));
+}
+
+const { tool } = Astro.props;
+const { Content } = await render(tool);
+---
+
+<Base
+  title={`${tool.data.name} — open-source alternative to ${tool.data.replaces[0].name} | saasdead`}
+  description={`${tool.data.tagline} An open-source alternative to ${tool.data.replaces.map((r) => r.name).join(', ')}. Paste one text into Claude and it sets everything up on your machine.`}
+>
+  <article class="tool wrap">
+    <nav class="breadcrumb">
+      <a href="/#directory">&larr; all tools</a>
+    </nav>
+
+    <header class="tool-header reveal">
+      <div class="tool-title-row">
+        <h1>{tool.data.name}</h1>
+        <span class="badge">{tool.data.category}</span>
+      </div>
+      <p class="tool-tagline">{tool.data.tagline}</p>
+    </header>
+
+    <section class="replaces reveal" aria-label="Commercial products this tool can stand in for">
+      <p class="replaces-label">Commercial equivalents</p>
+      <ul class="replaces-list">
+        {
+          tool.data.replaces.map((r) => (
+            <li class="replaces-chip">
+              <span class="chip-name">{r.name}</span>
+              <span class="replaces-price">{r.price}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="replaces-verdict">
+        <span class="accent">What you pay: {tool.data.pricing}.</span> It runs on your machine, so
+        your data stays with you.
+      </p>
+      <p class="replaces-links">
+        <a href={tool.data.website} target="_blank" rel="noopener">Official website</a>
+        <span aria-hidden="true">·</span>
+        <a href={tool.data.github} target="_blank" rel="noopener">Source code</a>
+      </p>
+    </section>
+
+    <aside class="noob-note reveal">
+      <strong>Never installed software like this?</strong> Skip to <em>Get it running</em>. Copy
+      the text, paste it into{' '}
+      <a href="https://claude.ai" target="_blank" rel="noopener">Claude</a>, answer its questions.
+      That's the whole job — about ten minutes.
+    </aside>
+
+    <div class="tool-body prose">
+      <Content />
+    </div>
+
+    <p class="tool-legal">
+      All product names and trademarks belong to their respective owners. saasdead is an
+      independent community project, not affiliated with or endorsed by any of the companies
+      mentioned. Prices shown are indicative and may have changed — check the vendor's website.
+    </p>
+  </article>
+
+  <script>
+    document.querySelectorAll('.prose pre').forEach((pre) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block';
+      pre.parentNode?.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      const btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.type = 'button';
+      btn.textContent = 'copy prompt';
+      btn.addEventListener('click', async () => {
+        const code = pre.querySelector('code');
+        const text = (code ? code.textContent : pre.textContent) ?? '';
+        try {
+          await navigator.clipboard.writeText(text);
+          btn.textContent = 'copied ✓';
+        } catch {
+          const range = document.createRange();
+          range.selectNodeContents(pre);
+          const sel = window.getSelection();
+          sel?.removeAllRanges();
+          sel?.addRange(range);
+          btn.textContent = 'select & copy';
+        }
+        setTimeout(() => (btn.textContent = 'copy prompt'), 2000);
+      });
+      wrapper.appendChild(btn);
+    });
+  </script>
+</Base>
